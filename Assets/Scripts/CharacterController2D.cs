@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Transform))]
@@ -14,12 +15,23 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] private Transform m_CeilingCheck;
     [SerializeField] private Collider2D m_CrouchDisableCollider;
 
-    const float k_GroundedRadius = .2f;
+    const float k_GroundedRadius = .02f;
     private bool m_Grounded = true;
     const float k_CeilingRadius = .2f;
     private Rigidbody2D m_Rigidbody2D;
     private bool m_FacingRight = true;
     private Vector3 m_Velocity = Vector3.zero;
+
+    [HideInInspector] private bool _canMove = true;
+
+    public bool CanMove
+    {
+        get => _canMove;
+        set //_canMove = value
+        {
+            _canMove = value;
+        }
+    }
 
     [Header("Events")]
     [Space]
@@ -30,6 +42,8 @@ public class CharacterController2D : MonoBehaviour
     public class BoolEvent : UnityEvent<bool> { }
 
     public BoolEvent OnCrouchEvent;
+    public BoolEvent OnFallEvent;
+    public BoolEvent OnMoveEvent;
     private bool m_wasCrouching = false;
 
     private void Awake()
@@ -38,24 +52,35 @@ public class CharacterController2D : MonoBehaviour
 
         if (OnLandEvent == null)
             OnLandEvent = new UnityEvent();
+        
+        if (OnMoveEvent == null)
+            OnMoveEvent = new BoolEvent();
+        
+        if (OnFallEvent == null)
+            OnFallEvent = new BoolEvent();
 
         if (OnCrouchEvent == null)
             OnCrouchEvent = new BoolEvent();
+        if (m_CrouchDisableCollider == null)
+            throw new NullReferenceException("Not installer property m_CrouchDisableCollider.");
     }
 
     private void FixedUpdate()
     {
-        bool wasGrounded = m_Grounded;
+        var wasGrounded = m_Grounded;
         m_Grounded = false;
         
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround, 0f, 0f);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
             {
                 m_Grounded = true;
                 if (!wasGrounded)
+                {
                     OnLandEvent.Invoke();
+                }
+                OnFallEvent.Invoke(!wasGrounded);
             }
         }
     }
@@ -71,7 +96,7 @@ public class CharacterController2D : MonoBehaviour
             }
         }
         
-        if (m_Grounded || m_AirControl)
+        if (CanMove && (m_Grounded || m_AirControl))
         {
             
             if (crouch)
@@ -84,11 +109,13 @@ public class CharacterController2D : MonoBehaviour
                 
                 move *= m_CrouchSpeed;
 
-                
+
                 
                 if (m_CrouchDisableCollider != null)
                     m_CrouchDisableCollider.enabled = false;
-            } else
+                
+            } 
+            else
             {
                 if (m_CrouchDisableCollider != null)
                     m_CrouchDisableCollider.enabled = true;
@@ -111,8 +138,9 @@ public class CharacterController2D : MonoBehaviour
             {
                 Flip();
             }
+            OnMoveEvent.Invoke(Mathf.Abs(move) > .1f);
         }
-        if (m_Grounded && jump)
+        if (CanMove && m_Grounded && jump)
         {
             m_Grounded = false;
             m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
