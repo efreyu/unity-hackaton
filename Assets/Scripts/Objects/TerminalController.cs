@@ -67,7 +67,7 @@ public class TerminalController : UsableObject
 
     public void TryUse()
     {
-        Debug.Log("USE!!!!!");
+//        Debug.Log("USE!!!!!");
         if (CanBeUse())
         {
             IsActived = !IsActived;

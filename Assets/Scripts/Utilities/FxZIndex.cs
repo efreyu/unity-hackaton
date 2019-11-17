@@ -8,8 +8,7 @@ public class FixZIndex : MonoBehaviour
     private void Awake()
     {
         transform = GetComponent<Transform>();
-//        transform.position.z = 0f;
-        if (transform)
-            transform.position.Set(transform.position.x, transform.position.y, .5f);
+
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
     }
 }
