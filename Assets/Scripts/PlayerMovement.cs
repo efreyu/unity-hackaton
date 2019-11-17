@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour {
         get => _isUsing;
         set
         {
-            if (!value || _isMoving) return;
+            if (!value || _isMoving || !canUse()) return;
             _isUsing = value;
             animator.SetBool("IsUsing", value);
             //TODO проверка скорости анимации
@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    private bool _itWasFalling = false;
+    private bool _itWasFalling = true;
     
     private bool _isAttention = false;
     public bool IsAttention
@@ -124,14 +124,18 @@ public class PlayerMovement : MonoBehaviour {
 
     public void OnFall(bool isFalling)
     {
-        if (!_itWasFalling)
+        if (isFalling && !_itWasFalling)
         {
-            _itWasFalling = !_itWasFalling;
+            animator.SetBool("IsFalling", true);
+            _itWasFalling = true;
         }
         else
         {
-            _itWasFalling = !isFalling;
-            animator.SetBool("IsFalling", isFalling);
+            if (!isFalling)
+            {
+                _itWasFalling = isFalling;
+                animator.SetBool("IsFalling", false);
+            }
         }
     }
 
@@ -153,5 +157,25 @@ public class PlayerMovement : MonoBehaviour {
         controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
         controller.CanMove = CanMove;
         jump = false;
+    }
+
+    private bool canUse()
+    {
+        var result = false;
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(gameObject.transform.position, .02f);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].gameObject != gameObject)
+            {
+                if (colliders[i].gameObject.TryGetComponent(typeof(TerminalController), out Component component))
+                {
+                    TerminalController terminal = (TerminalController)component;
+                    terminal.TryUse();
+                    result = true;
+                }
+            }
+        }
+
+        return result;
     }
 }

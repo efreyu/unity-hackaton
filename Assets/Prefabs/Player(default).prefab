@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 5163957512575750587}
   m_Layer: 8
   m_Name: Player(default)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -234,6 +234,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnFallEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMoveEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5163957512575750587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,6 +255,8 @@ MonoBehaviour:
   controller: {fileID: 6568726903473261765}
   animator: {fileID: 4108785930061943433}
   runSpeed: 40
+  jump: 0
+  crouch: 0
 --- !u!1 &3312679481385865739
 GameObject:
   m_ObjectHideFlags: 0

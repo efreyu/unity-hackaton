@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Transform))]
 [RequireComponent(typeof(Collider2D))]
 public class CharacterController2D : MonoBehaviour
 {
@@ -48,6 +47,7 @@ public class CharacterController2D : MonoBehaviour
 
     private void Awake()
     {
+        gameObject.AddComponent<FixZIndex>();
         m_Rigidbody2D = GetComponent<Rigidbody2D>();
 
         if (OnLandEvent == null)

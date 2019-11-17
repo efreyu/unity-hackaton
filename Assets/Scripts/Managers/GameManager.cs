@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 public class GameManager : MonoBehaviour
@@ -12,6 +13,7 @@ public class GameManager : MonoBehaviour
 //    public Canvas pauseMenuCanvas;
 //    public Canvas endGameCanvas;
     public Camera gameCamera;
+    public CinemachineVirtualCamera fallowCamera;
     
 //    [Header("Audio Manager")]
 //    public Slider musicSlider;
@@ -66,6 +68,7 @@ public class GameManager : MonoBehaviour
         }
         _instance = this;
 //        UIManager.InitScoreUi();
+        Init();
         DontDestroyOnLoad(gameObject);
     }
 
@@ -90,6 +93,22 @@ public class GameManager : MonoBehaviour
 //        Instance.gameCamera.cullingMask = 1 << LayerMask.NameToLayer("EndGameLayer");
 //        Instance.endGameCanvas = GameObject.FindGameObjectWithTag("EndGameCanvas").GetComponent<Canvas>();
 //        Instance.endGameCanvas.enabled = true;
+    }
+
+    public void Init()
+    {
+        Instance.gameCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        Instance.fallowCamera = GameObject.FindGameObjectWithTag("FallowCamera").GetComponent<CinemachineVirtualCamera>();
+        
+        ChangeFallow();
+    }
+
+    private void ChangeFallow()
+    {
+        if (Instance.fallowCamera != null)
+        {
+            Instance.fallowCamera.Follow = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+        }
     }
     
     
