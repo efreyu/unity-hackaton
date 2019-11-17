@@ -14,4 +14,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Scenes/_Levels/Lab.unity
     guid: 92d266058aaa0dc4993215709d18bd67
+  - enabled: 1
+    path: Assets/_Scenes/_Levels/TestScene/TestSceneStart.unity
+    guid: 967a11173ddca004ead6a02520e60513
+  - enabled: 0
+    path: Assets/__DELETED_GUID_Trash/53ba2b5eeaac31f40a328720d2d01e30
+    guid: 53ba2b5eeaac31f40a328720d2d01e30
+  - enabled: 1
+    path: Assets/_Scenes/BigMap.unity
+    guid: e75f8c75027995743bc208ba4f63d317
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   m_configObjects: {}

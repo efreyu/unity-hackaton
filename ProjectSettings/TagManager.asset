@@ -24,8 +24,8 @@ TagManager:
   - Ground
   - Collider
   - Terminal
-  - 
-  - 
+  - Stair
+  - Wall
   - 
   - 
   - 
@@ -49,11 +49,17 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Stair
+    uniqueID: 285950587
+    locked: 0
   - name: Object
     uniqueID: 3248646427
     locked: 0
   - name: Ground
     uniqueID: 1244893417
+    locked: 0
+  - name: Wall
+    uniqueID: 2275134733
     locked: 0
   - name: Player
     uniqueID: 2815968337

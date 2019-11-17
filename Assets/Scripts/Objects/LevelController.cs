@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+// NOT USED
 public enum LevelType
 {
     ROOM,

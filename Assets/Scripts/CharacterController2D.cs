@@ -14,8 +14,8 @@ public class CharacterController2D : MonoBehaviour
     [SerializeField] private Transform m_CeilingCheck;
     [SerializeField] private Collider2D m_CrouchDisableCollider;
 
-    const float k_GroundedRadius = .02f;
-    private bool m_Grounded = true;
+    const float k_GroundedRadius = .2f;
+    private bool m_Grounded = false;
     const float k_CeilingRadius = .2f;
     private Rigidbody2D m_Rigidbody2D;
     private bool m_FacingRight = true;
@@ -68,11 +68,9 @@ public class CharacterController2D : MonoBehaviour
     private void FixedUpdate()
     {
         var wasGrounded = m_Grounded;
-        var wasChanged = false;
         m_Grounded = false;
         
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround, 0f, 0f);
-//        Debug.Log(colliders.Length);
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
@@ -82,12 +80,10 @@ public class CharacterController2D : MonoBehaviour
                 if (!wasGrounded)
                 {
                     OnLandEvent.Invoke();
-                    wasChanged = true;
                 }
                 OnFallEvent.Invoke(!wasGrounded);
             }
         }
-        if (!wasChanged)  m_Grounded = true;
     }
 
 
@@ -145,11 +141,27 @@ public class CharacterController2D : MonoBehaviour
             }
             OnMoveEvent.Invoke(Mathf.Abs(move) > .1f);
         }
-        if (CanMove && m_Grounded && jump)
+//        if (m_Grounded) Debug.Log("grounded");
+//        if (jump) Debug.Log("jump");
+        if (CanMove && m_Grounded && jump && !crouch)
         {
             m_Grounded = false;
             m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
         }
+    }
+
+    public void Climb(bool up = true)
+    {
+        m_Grounded = true;
+        Debug.Log("Climb");
+//        Vector3 newPos = gameObject.transform.position;
+//        if (!up) newPos.y = newPos.y - .2f;
+//        else newPos.y = newPos.y + .4f;
+//        gameObject.transform.position = newPos;
+//        Vector3 pos = transform.position;
+//        pos.y = gameObject.transform.position.y + .3f;
+//        transform.position = Vector3.Lerp (transform.position, pos, 15f * Time.fixedDeltaTime);
+        m_Rigidbody2D.AddForce(new Vector2(0f, 32f));
     }
 
 

@@ -2,38 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 [RequireComponent(typeof(Animator))]
 public class CreaturesController : MonoBehaviour
 {
-    public Animator animator;
-    private bool _isDead;
-    private bool _isInited = false;
 
-    public bool IsDead
+    public AIPath AiPath;
+
+    private void Update()
     {
-        get => _isDead;
-        set
+        if (AiPath.desiredVelocity.x >= 0.1f)
         {
-            if (_isDead)
-            {
-                _isDead = value;
-            }
+            transform.localPosition = new Vector3(-1f,transform.localPosition.y,transform.localPosition.z);
+        } else if (AiPath.desiredVelocity.x <= -0.1f)
+        {
+            transform.localPosition = new Vector3(1f,transform.localPosition.y,transform.localPosition.z);
         }
-    }
-
-    private bool Init()
-    {
-        if (_isInited) return _isInited;
-        
-        animator = GetComponent<Animator>();
-        _isInited = !_isInited;
-
-        return _isInited;
-    }
-
-    private void Awake()
-    {
-        Init();
     }
 }

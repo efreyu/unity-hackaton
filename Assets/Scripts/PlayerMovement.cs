@@ -11,8 +11,10 @@ public class PlayerMovement : MonoBehaviour {
 
     private float horizontalMove = 0f;
     public bool jump = false;
+    public bool climb = false;
     public bool crouch = false;
     private bool _isJumpung = false;
+    private bool _isClimbs = false;
 
     private bool _isUsing = false;
     public bool IsUsing
@@ -78,18 +80,36 @@ public class PlayerMovement : MonoBehaviour {
 
         if (Input.GetButtonDown("Jump") && CanMove)
         {
-            jump = true;
-            animator.SetBool("IsJumping", true);
-            _isJumpung = true;
-            StartCoroutine (
-                WaitAndDo(.3f, ()=>{
-                    if (_isJumpung)
-                    {
-                        _isJumpung = !_isJumpung;
-                        animator.SetBool("IsJumping", false);
-                    }
-                })
-            );
+            if (canClimb())
+            {
+                climb = true;
+                animator.SetBool("IsClimbs", true);
+                _isClimbs = true;
+                StartCoroutine (
+                    WaitAndDo(.5f, ()=>{
+                        if (_isClimbs)
+                        {
+                            _isClimbs = !_isClimbs;
+                            animator.SetBool("IsClimbs", false);
+                        }
+                    })
+                );
+            }
+            else
+            {
+                jump = true;
+                animator.SetBool("IsJumping", true);
+                _isJumpung = true;
+                StartCoroutine (
+                    WaitAndDo(.3f, ()=>{
+                        if (_isJumpung)
+                        {
+                            _isJumpung = !_isJumpung;
+                            animator.SetBool("IsJumping", false);
+                        }
+                    })
+                );
+            }
         }
 
         if (Input.GetButtonDown("Crouch"))
@@ -101,7 +121,7 @@ public class PlayerMovement : MonoBehaviour {
         }
         
         IsUsing = Input.GetButtonDown("Use");
-        IsAttention = Input.GetButtonDown("Attention");
+//        IsAttention = Input.GetButtonDown("Attention");
 
     }
 
@@ -155,19 +175,28 @@ public class PlayerMovement : MonoBehaviour {
     void FixedUpdate ()
     {
         controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
-        controller.CanMove = CanMove;
-        jump = false;
+
+        if (canClimb())
+        {
+            moveClimb();
+        }
+        else
+        {
+            controller.CanMove = CanMove;
+            jump = false;
+        }
     }
 
     private bool canUse()
     {
         var result = false;
+        Component component;
         Collider2D[] colliders = Physics2D.OverlapCircleAll(gameObject.transform.position, .02f);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
             {
-                if (colliders[i].gameObject.TryGetComponent(typeof(TerminalController), out Component component))
+                if (colliders[i].gameObject.TryGetComponent(typeof(TerminalController), out component))
                 {
                     TerminalController terminal = (TerminalController)component;
                     terminal.TryUse();
@@ -177,5 +206,42 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         return result;
+    }
+
+    private bool canClimb()
+    {
+        var result = false;
+        Component component;
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(gameObject.transform.position, .02f);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].gameObject != gameObject)
+            {
+                if (colliders[i].gameObject.TryGetComponent(typeof(StairController), out component))
+                {
+                    StairController terminal = (StairController)component;
+                    terminal.TryUse();
+                    result = true;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public void moveClimb()
+    {
+        /*if (Input.GetButton("Crouch"))
+        {
+            Debug.Log("DOWN!!!!");
+            controller.Climb(false);
+        }
+        else */if (Input.GetButton("Jump"))
+        {
+//            Debug.Log("UP!!!!");
+            controller.Climb(true);
+        }
+
+//        Debug.Log(Input.GetButton("Jump"));
     }
 }
