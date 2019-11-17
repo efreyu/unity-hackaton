@@ -57,11 +57,10 @@ public class GameManager : MonoBehaviour
 
     private void ChangeFallow()
     {
-        if (Instance.fallowCamera != null)
-        {
-            Instance.fallowCamera.Follow = Instance.currentPlayer;
-            Instance.fallowCamera.LookAt = null;
-        }
+        if (Instance.fallowCamera == null) return;
+        
+        Instance.fallowCamera.Follow = Instance.currentPlayer;
+        Instance.fallowCamera.LookAt = null;
     }
 
     private void FixedUpdate()
