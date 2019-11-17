@@ -86,8 +86,11 @@ public class EnemyAI : MonoBehaviour
         
         if (force.x >= 0f || force.x < 0f)
         {
-            enemyObj.localPosition = new Vector3(force.x >= 0f ? -.2f : .2f,.1f,.1f);
+//            enemyObj.localPosition = new Vector3(force.x >= 0f ? -.2f : .2f,.1f,.1f);
             _enemyAnim.SetFloat("Speed",force.x >= 0f ? -.2f : .2f);
+            Vector3 theScale = transform.localScale;
+            theScale.x *= force.x >= 0f ? -1 : 1;
+            transform.localScale = theScale;
         }/* else if (force .y <= -0.1f)
         {
             enemyObj.localPosition = new Vector3(.1f,.1f,.1f);
