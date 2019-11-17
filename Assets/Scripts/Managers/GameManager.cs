@@ -1,64 +1,37 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Cinemachine;
+using JetBrains.Annotations;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
+
 public class GameManager : MonoBehaviour
 {
 
     private static GameManager _instance = null;
     [Header("Canvas Manager")]
-//    public Canvas mainMenuCanvas;
-//    public Canvas settingsMenuCanvas;
-//    public Canvas infoMenuCanvas;
-//    public Canvas pauseMenuCanvas;
-//    public Canvas endGameCanvas;
     public Camera gameCamera;
     public CinemachineVirtualCamera fallowCamera;
+    public Transform currentPlayer;
+    [CanBeNull] private Transform _currentTile;
     
-//    [Header("Audio Manager")]
-//    public Slider musicSlider;
-//    public Slider sfxSlider;
-//    public Button soundToggleButton;
-//    public Sprite soundOnSprite;
-//    public Sprite soundOffSprite;
-//    
-//    [Header("Score Manager")]
-//    public TextMesh currentScoreObj;
-//    public TextMesh highScoreObj;
-//    public TextMesh timeAvaliableObj;
-    
+    [FormerlySerializedAs("GameObject")] public List<GameObject> Tiles = new List<GameObject>();
+    public SceneManager scene;
+
     public static GameManager Instance
     {
         get => _instance;
     }
     private int _currentScore = 0;
-//    public int CurrentScore
-//    {
-//        get => _currentScore;
-//        set
-//        {
-//            if (value > 0)
-//            {
-//                _currentScore += value * 10;
-//                _timeAvailable += value * 2;
-//            }
-//            else
-//            {
-//                _currentScore = value;
-//            }
-//            currentScoreObj.text = "Current Score: " + _currentScore;
-//            if (_currentScore <= PlayerPrefs.GetInt("HighScore", 0))
-//                return;
-//            PlayerPrefs.SetInt("HighScore", _currentScore);
-//            highScoreObj.text = $"Highest Score: {_currentScore}";
-//        }
-//    }
-    private bool _isGameRunning;
 
     void Awake()
     {
         MakeInstance();
     }
+    
     private void MakeInstance()
     {
         if (_instance)
@@ -67,49 +40,47 @@ public class GameManager : MonoBehaviour
             return;
         }
         _instance = this;
-//        UIManager.InitScoreUi();
         Init();
         DontDestroyOnLoad(gameObject);
     }
 
-    public void StartGame()
-    {
-        if (_isGameRunning) return;
-        
-        _isGameRunning = true;
-        
-    }
-    public void EndGame(bool backToMenu = false)
-    {
-        if (!_isGameRunning) return;
-        
-        _isGameRunning = false;
-//        if (backToMenu)
-//        {
-//            return;
-//        }
-//        Time.timeScale = 0f;
-//        Instance.gameCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
-//        Instance.gameCamera.cullingMask = 1 << LayerMask.NameToLayer("EndGameLayer");
-//        Instance.endGameCanvas = GameObject.FindGameObjectWithTag("EndGameCanvas").GetComponent<Canvas>();
-//        Instance.endGameCanvas.enabled = true;
-    }
 
     public void Init()
     {
         Instance.gameCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         Instance.fallowCamera = GameObject.FindGameObjectWithTag("FallowCamera").GetComponent<CinemachineVirtualCamera>();
+        Instance.currentPlayer = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
         
         ChangeFallow();
     }
+    
 
     private void ChangeFallow()
     {
         if (Instance.fallowCamera != null)
         {
-            Instance.fallowCamera.Follow = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+            Instance.fallowCamera.Follow = Instance.currentPlayer;
+            Instance.fallowCamera.LookAt = null;
         }
     }
-    
-    
+
+    private void FixedUpdate()
+    {
+        /*Collider2D[] colliders = Physics2D.OverlapCircleAll(gameObject.transform.position, .02f);
+//        Debug.Log(colliders.Length);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            if (colliders[i].gameObject != gameObject)
+            {
+                Debug.Log(colliders[i].gameObject.name);
+//                Debug.Log(colliders[i].gameObject.TryGetComponent(typeof(LevelController), out Component component));
+//                if (colliders[i].gameObject.TryGetComponent(typeof(LevelController), out Component component))
+//                {
+//                    TerminalController terminal = (TerminalController)component;
+//                    terminal.TryUse();
+                    
+//                }
+            }
+        }*/
+    }
 }

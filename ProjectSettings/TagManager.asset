@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - FallowCamera
+  - LevelManager
+  - LevelChanger
+  - GameManager
+  - _DontFallow
   layers:
   - Default
   - TransparentFX

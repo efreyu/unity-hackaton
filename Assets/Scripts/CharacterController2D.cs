@@ -68,21 +68,26 @@ public class CharacterController2D : MonoBehaviour
     private void FixedUpdate()
     {
         var wasGrounded = m_Grounded;
+        var wasChanged = false;
         m_Grounded = false;
         
         Collider2D[] colliders = Physics2D.OverlapCircleAll(m_GroundCheck.position, k_GroundedRadius, m_WhatIsGround, 0f, 0f);
+//        Debug.Log(colliders.Length);
         for (int i = 0; i < colliders.Length; i++)
         {
             if (colliders[i].gameObject != gameObject)
             {
+//                Debug.Log(colliders[i].gameObject.name);
                 m_Grounded = true;
                 if (!wasGrounded)
                 {
                     OnLandEvent.Invoke();
+                    wasChanged = true;
                 }
                 OnFallEvent.Invoke(!wasGrounded);
             }
         }
+        if (!wasChanged)  m_Grounded = true;
     }
 
 
